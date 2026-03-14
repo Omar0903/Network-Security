@@ -25,8 +25,15 @@ public class CaeserCipher {
     }
 
     public int analyse(String plainText, String cipherText) {
-        // TODO: Analyze the plainText and cipherText to determine the key(s)
+    plainText = plainText.toLowerCase();
+    cipherText = cipherText.toLowerCase();
 
-        return 0;
+    for (int key = 0; key < 26; key++) {
+        if (encrypt(plainText, key).equals(cipherText)) {
+            return key;
+        }
     }
+
+    return -1;
+}
 }
