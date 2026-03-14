@@ -4,10 +4,46 @@ import java.util.*;
 public class ColumnarCipher {
 
     public List<Integer> analyse(String plainText, String cipherText) {
-        // TODO: Analyze the plainText and cipherText to determine the key(s)
+        plainText = plainText.toLowerCase();
+        cipherText = cipherText.toUpperCase();
 
-        return new ArrayList<>(); // Placeholder return
+        for (int keyLen = 2; keyLen <= plainText.length(); keyLen++) {
+            if (plainText.length() % keyLen != 0) {
+                continue;
+            }
+
+            List<Integer> nums = new ArrayList<>();
+            for (int i = 1; i <= keyLen; i++) {
+                nums.add(i);
+            }
+
+            List<List<Integer>> perms = new ArrayList<>();
+            generatePermutations(nums, 0, perms);
+
+            for (List<Integer> key : perms) {
+                String enc = encrypt(plainText, key);
+                if (enc.equalsIgnoreCase(cipherText)) {
+                    return key;
+                }
+            }
+        }
+
+        return new ArrayList<>();
     }
+
+    private void generatePermutations(List<Integer> arr, int index, List<List<Integer>> perms) {
+        if (index == arr.size()) {
+            perms.add(new ArrayList<>(arr));
+            return;
+        }
+
+        for (int i = index; i < arr.size(); i++) {
+            Collections.swap(arr, index, i);
+            generatePermutations(arr, index + 1, perms);
+            Collections.swap(arr, index, i);
+        }
+    }
+
 
     public String decrypt(String cipherText, List<Integer> key) {
         int cipherSize = cipherText.length();
