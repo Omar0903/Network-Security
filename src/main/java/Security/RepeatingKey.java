@@ -3,12 +3,60 @@ package Security;
 public class RepeatingKey {
     public String analyse(String plainText, String cipherText) {
         // Students should complete this part
-        return null;
+        plainText = plainText.toLowerCase();
+        cipherText = cipherText.toLowerCase();
+
+        int len = plainText.length();
+        StringBuilder keyStream = new StringBuilder();
+
+        // Calculate keystream
+        for (int i = 0; i < len; i++) {
+            int p = plainText.charAt(i) - 'a';
+            int c = cipherText.charAt(i) - 'a';
+            keyStream.append((char) (((c - p + 26) % 26) + 'a'));
+        }
+
+        String fullKey = keyStream.toString();
+
+        // Find smallest repeating pattern
+        for (int i = 1; i <= fullKey.length(); i++) {
+            String candidate = fullKey.substring(0, i);
+
+            StringBuilder repeated = new StringBuilder();
+            while (repeated.length() < fullKey.length()) {
+                repeated.append(candidate);
+            }
+
+            if (repeated.substring(0, fullKey.length()).equals(fullKey)) {
+                return candidate;
+            }
+        }
+
+        return fullKey;
     }
 
     public String decrypt(String cipherText, String key) {
         // Students should complete this part
-        return null;
+        cipherText = cipherText.toLowerCase();
+        key = key.toLowerCase();
+
+        int cipherLen = cipherText.length();
+
+        // Repeat key to match cipher length
+        StringBuilder extendedKey = new StringBuilder(key);
+        while (extendedKey.length() < cipherLen) {
+            extendedKey.append(extendedKey.charAt(extendedKey.length() - key.length()));
+        }
+
+        StringBuilder plainText = new StringBuilder();
+
+        for (int i = 0; i < cipherLen; i++) {
+            int c = cipherText.charAt(i) - 'a';
+            int k = extendedKey.charAt(i) - 'a';
+            plainText.append((char) (((c - k + 26) % 26) + 'a'));
+        }
+
+        return plainText.toString();
     }
 
     public String encrypt(String plainText, String key) {
